@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#d35400">
+    <title>绩效域案例分析学习助手</title>
+    
+    <style>
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 0; 
+            margin: 0;
+            min-height: 100vh;
+        }
+        
+        .app-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .app-title {
+            font-size: 24px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0 0 8px 0;
+        }
+        
+        .app-subtitle {
+            font-size: 13px;
+            color: #666;
+            margin: 0;
+        }
+        
+        .exam-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            margin-top: 8px;
+            font-weight: bold;
+        }
+        
+        .control-panel {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            margin: 15px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .control-panel button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 100px;
+            max-width: 150px;
+        }
+        
+        .btn-expand {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-collapse {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        
+        .control-panel button:active {
+            transform: scale(0.95);
+        }
+        
+        .search-box {
+            padding: 12px;
+            width: 100%;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            outline: none;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .search-box:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .stats-info {
+            text-align: center;
+            color: white;
+            padding: 15px;
+            font-size: 14px;
+        }
+        
+        .stats-info strong {
+            font-size: 24px;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .tips-section {
+            background: rgba(255, 255, 255, 0.95);
+            margin: 15px;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .tips-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #d35400;
+            margin: 0 0 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .tips-content {
+            background: #fff3e0;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #f39c12;
+        }
+        
+        .tips-item {
+            padding: 8px 0;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #555;
+        }
+        
+        .domain-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 15px;
+            padding: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .domain-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .domain-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        
+        .domain-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .domain-header {
+            padding: 20px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 16px;
+            user-select: none;
+        }
+        
+        .domain-icon {
+            font-size: 24px;
+        }
+        
+        .domain-content {
+            display: none;
+            padding: 20px;
+            background: #fafafa;
+        }
+        
+        .goal-section {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .goal-title {
+            font-weight: bold;
+            color: #2e7d32;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .goal-list {
+            font-size: 13px;
+            line-height: 1.8;
+            color: #555;
+        }
+        
+        .problem-section {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid #e74c3c;
+            transition: all 0.3s;
+        }
+        
+        .problem-section:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .problem-number {
+            display: inline-block;
+            background: #e74c3c;
+            color: white;
+            width: 24px;
+            height: 24px;
+            line-height: 24px;
+            text-align: center;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        
+        .problem-text {
+            display: inline;
+            font-size: 13px;
+            line-height: 1.8;
+            color: #333;
+        }
+        
+        .highlight-key {
+            background: #fff3cd;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            color: #856404;
+        }
+        
+        .memory-section {
+            background: #f3e5f5;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border-left: 4px solid #9c27b0;
+        }
+        
+        .memory-title {
+            font-weight: bold;
+            color: #6a1b9a;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .memory-item {
+            background: white;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 8px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        
+        .toggle-icon {
+            transition: transform 0.3s;
+        }
+        
+        .toggle-icon.expanded {
+            transform: rotate(180deg);
+        }
+        
+        .domain-1 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .domain-2 { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .domain-3 { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .domain-4 { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .domain-5 { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+        .domain-6 { background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); }
+        .domain-7 { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+        .domain-8 { background: linear-gradient(135deg, #ff9a56 0%, #ff6a88 100%); }
+        
+        .section-count {
+            background: rgba(255, 255, 255, 0.3);
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-header">
+    <h1 class="app-title">📊 绩效域案例分析学习助手</h1>
+    <p class="app-subtitle">信息系统项目管理师 · 8大绩效域常见问题速查</p>
+    <div class="exam-badge">2025年全国计算机技术与软件专业技术资格考试</div>
+</div>
+
+<div class="control-panel">
+    <button class="btn-expand" onclick="toggleAll(true)">📂 全部展开</button>
+    <button class="btn-collapse" onclick="toggleAll(false)">📁 全部收起</button>
+    <input type="text" id="searchInput" class="search-box" oninput="handleSearch()" placeholder="🔍 搜索问题关键词...">
+</div>
+
+<div class="stats-info">
+    <strong id="statsNumber">150+</strong>
+    <span id="statsText">个常见问题已收录</span>
+</div>
+
+<div class="tips-section">
+    <div class="tips-title">
+        💡 绩效域案例找错思路
+    </div>
+    <div class="tips-content">
+        <div class="tips-item">✅ <strong>1. 各绩效要点找错</strong> - 包含绩效要点和具体包含的内容</div>
+        <div class="tips-item">✅ <strong>2. 绩效目标、考核指标找错</strong> - 重点关注目标是否达成</div>
+        <div class="tips-item">✅ <strong>3. 其他相关问题</strong> - 注意绩效域之间的联系</div>
+        <div class="tips-item" style="color: #e74c3c; margin-top: 10px;">
+            ⚠️ <strong>重要提示：</strong>此部分考案例找错概率很小，当做熟悉了解即可，时间紧张可不学
+        </div>
+    </div>
+</div>
+
+<div class="domain-grid" id="domainGrid"></div>
+
+<script>
+const performanceDomains = [
+    {
+        id: 1,
+        name: "干系人绩效域",
+        icon: "👥",
+        goals: [
+            "建立高效的工作关系",
+            "干系人认同项目目标",
+            "干系人满意度提升",
+            "消除负面影响"
+        ],
+        memory: [
+            "高效关系 - 建立良好的沟通渠道",
+            "认同目标 - 确保干系人理解并支持",
+            "满意度 - 持续收集反馈",
+            "无负面影响 - 及时识别和处理冲突"
+        ],
+        problems: [
+            "未能全面识别项目干系人，导致关键参与者缺失【可结合干系人登记册、权力利益方格】",
+            "对干系人的理解分析不足，未能准确把握他们的需求和期望",
+            "未对干系人进行有效优先级排序，影响了项目资源的合理分配",
+            "未能有效引导干系人参与项目活动，减少了他们的参与度和支持【可结合干系人参与评估矩阵】",
+            "缺乏对干系人持续监督的机制，无法及时了解和响应他们的变化",
+            "干系人识别工作不全面，可能遗漏了重要参与者",
+            "对干系人的理解分析存在偏差，导致项目管理策略未能满足实际需求",
+            "管理干系人参与不到位，未能充分发挥他们的积极作用",
+            "监督干系人参与的工作未能有效执行，导致项目风险增加",
+            "未能与干系人建立有效的工作关系，影响了项目的整体协作",
+            "未能让干系人充分认同项目目标，降低了他们的支持和贡献",
+            "在干系人绩效域中使用了不恰当的指标和检查方法，需要进行调整以确保正确的管理方向",
+            "干系人参与不够，沟通不畅"
+        ]
+    },
+    {
+        id: 2,
+        name: "团队绩效域",
+        icon: "🤝",
+        goals: [
+            "团队成员共享责任",
+            "建立高绩效团队",
+            "展现领导力"
+        ],
+        memory: [
+            "共享责任 - 明确角色和职责",
+            "高绩效团队 - 培养协作和信任",
+            "展现领导力 - 激励和引导团队"
+        ],
+        problems: [
+            "未能建立积极的团队文化，影响了团队凝聚力和协作精神",
+            "缺乏有效的策略来构建高绩效的项目团队",
+            "未能充分培养和发展团队成员的领导力技能",
+            "在塑造团队文化方面存在不足，需要加强相关工作",
+            "未能有效实施措施以打造高绩效项目团队",
+            "在培养领导力方面措施不力，需要改进方法和策略",
+            "团队成员未能充分共享责任，导致工作负担不均",
+            "冲突管理不及时，未能有效解决团队内部矛盾",
+            "冲突管理方法不当，未能妥善处理团队冲突",
+            "团队激励措施不到位，未能充分调动团队成员的积极性",
+            "在情商方面，自我管理和自我意识、社交意识、社交技能的培养存在误区",
+            "决策过程中存在问题，如缺乏充分讨论或未能采用合适的决策模式，比如单方面决策、整体决策、发散/汇聚的模式",
+            "在团队绩效域中选用的指标和检查方法不适当，需要重新评估和调整",
+            "没有培养员工的韧性、批判性思维等"
+        ]
+    },
+    {
+        id: 3,
+        name: "开发方法和生命周期绩效域",
+        icon: "🔄",
+        goals: [
+            "开发方法符合可交付成果",
+            "项目交付与价值关联",
+            "促进项目交付节奏"
+        ],
+        memory: [
+            "方法符合交付 - 选择合适的开发方法（预测型/混合型/适应型）",
+            "价值关联 - 确保交付物满足价值诉求",
+            "促进交付节奏 - 一次性/多次/定期/持续交付"
+        ],
+        problems: [
+            "选择了不适宜的交付节奏，未能有效满足项目目标和干系人期望【一次性交付、多次交付、定期交付和持续交付】",
+            "采用的开发方法不适用于当前项目需求，影响了开发效率和成果质量【预测型方法、混合型方法和适应型方法】",
+            "项目交付未能紧密结合干系人的价值诉求，导致成果的实用性和相关性不足",
+            "在开发方法和生命周期绩效域中错误应用了指标和检查方法，需要重新评估和调整以确保正确的项目管理导向",
+            "单独进行管理，没有与其他绩效域紧密联系"
+        ]
+    },
+    {
+        id: 4,
+        name: "规划绩效域",
+        icon: "📋",
+        goals: [
+            "有条理、协调一致的方式推进",
+            "系统地交付项目成果",
+            "对项目演变进行详细记录和说明",
+            "投入适当的时间和成本进行规划",
+            "充分满足管理干系人的需求",
+            "根据新出现的需求灵活调整"
+        ],
+        memory: [
+            "有条理推进 - 制定清晰的计划",
+            "系统交付 - 确保交付物完整",
+            "详细说明 - 记录项目演变过程",
+            "适当时间 - 平衡规划投入",
+            "充分管理需求 - 满足干系人期望",
+            "灵活调整 - 适应变化"
+        ],
+        problems: [
+            "缺乏对影响项目规划因素的分析，导致规划不全面",
+            "未进行项目估算，使得资源分配和时间管理缺乏依据",
+            "未对项目团队的组成和结构进行规划，影响团队协作和效率",
+            "缺乏沟通规划，导致信息传递不畅和干系人参与不足",
+            "未对实物资源进行适当规划，可能影响项目的日常运作",
+            "采购规划缺失，可能导致成本控制不当和供应链问题",
+            "变更规划不足，未能有效应对项目过程中的变化",
+            "忽视了度量指标的一致性，导致数据分析不准确",
+            "在分析影响规划的因素时出现错误，需要重新评估",
+            "项目估算工作不全面/不充分，可能导致预算和进度的偏差",
+            "项目团队规划不足，未能充分发挥团队潜力",
+            "沟通规划不完善，影响了项目内外部的沟通效率",
+            "实物资源规划不足，可能导致资源浪费或短缺",
+            "采购规划不周全，可能影响项目成本和进度",
+            "变更规划不充分，未能及时适应项目变更需求",
+            "度量指标设置错误，需要重新设计以确保有效监控",
+            "未能维持规划的一致性，导致项目执行中的混乱",
+            "项目无法有条理、协调一致的方式推进了，需要改进规划流程",
+            "无法系统地交付项目成果，需要优化项目管理方法",
+            "未对项目演变进行详细记录和说明，应加强文档管理",
+            "规划投入的时间和成本不适当，需要重新评估资源分配",
+            "规划内容未能充分满足管理干系人的需求，应进行调整",
+            "未能根据新出现的需求进行及时调整，需要增强灵活性",
+            "混淆了准确度和精确度的概念，应明确区分并正确应用",
+            "确定性估算和概率估算、绝对估算和相对估算、基于工作流的估算、对不确定性的调整估算等搞混了，需要根据项目特点选择合适的估算策略",
+            "在规划绩效域中使用了不恰当的指标和检查方法，应进行修正"
+        ]
+    },
+    {
+        id: 5,
+        name: "项目工作绩效域",
+        icon: "⚙️",
+        goals: [
+            "实现高效和有效的项目绩效",
+            "适合项目和环境的过程",
+            "适当的沟通和干系人参与",
+            "有效管理实物资源",
+            "有效管理采购",
+            "新工作和变更得到处理",
+            "持续学习和改进"
+        ],
+        memory: [
+            "高效绩效 - 优化工作流程",
+            "适合过程 - 选择恰当方法",
+            "适当沟通 - 保持信息畅通",
+            "有效资源管理 - 优化资源利用",
+            "有效采购管理 - 控制采购成本",
+            "变更处理 - 及时响应变化",
+            "持续学习 - 促进团队成长"
+        ],
+        problems: [
+            "项目未进行充分的过程审查，导致执行效率低下",
+            "未充分考虑项目的潜在制约因素，影响了项目进度",
+            "工作过程和能力未得到充分关注，导致价值交付和团队激励不足",
+            "沟通管理不到位，影响了团队成员和干系人的参与度",
+            "实物资源管理不善，未能有效支持项目活动",
+            "采购事宜处理不当，可能影响项目成本和时间表",
+            "对新工作和变更的监督不足，导致项目目标偏离",
+            "缺乏持续改进和学习的机制，未能提升项目绩效",
+            "项目过程审查方法不当或内容不全面，需要改进",
+            "未全面评估项目制约因素，可能导致项目风险增加",
+            "工作过程和能力管理存在问题，未能确保有效的价值创造",
+            "沟通管理不足，影响了信息的有效传递和团队协作",
+            "实物资源管理不当，降低了资源利用效率",
+            "采购管理缺失，可能造成资源浪费和成本上升",
+            "变更管理不力，未能妥善处理项目变更请求",
+            "知识管理不足，未能有效支持团队学习和项目改进",
+            "项目未能达到预期的高效和有效绩效",
+            "项目过程选择不当，未能适应项目需求和环境特点",
+            "在工作绩效域中使用的指标和检查方法不恰当，需要重新评估和调整"
+        ]
+    },
+    {
+        id: 6,
+        name: "交付绩效域",
+        icon: "📦",
+        goals: [
+            "实现既定的业务目标和战略规划",
+            "项目达到预期成果",
+            "项目收益在预定时间内实现",
+            "项目团队对需求有清晰的理解",
+            "干系人对可交付成果接受和满意"
+        ],
+        memory: [
+            "实现业务目标 - 对齐战略",
+            "预期成果 - 满足需求",
+            "按时收益 - 及时交付",
+            "清晰需求 - 共同理解",
+            "干系人满意 - 质量保证"
+        ],
+        problems: [
+            "项目未能有效交付预期价值",
+            "缺乏充分的需求启发过程",
+            "需求管理不足，未能确保需求的完整性和准确性",
+            "没有做范围定义且范围变更未得到妥善处理",
+            "没有做好质量管理工作",
+            "需求搜集不全面，导致需求启发工作不到位",
+            "需求管理执行不力，影响项目进度和成果",
+            "项目范围定义不清，导致工作重点和目标不明确",
+            "需求变更未遵循既定的控制流程，造成混乱和延误",
+            "未能实现既定的业务目标和战略规划",
+            "项目未能达到预期成果，未满足利益相关者的期望",
+            "项目收益未能在预定时间内实现，影响投资回报",
+            "项目团队对需求的理解存在偏差，缺乏共识或者对需求没有清晰的理解",
+            "干系人对项目的可交付成果不接受，非常不满意",
+            "在工作绩效监控中，使用了不恰当的指标和检查方法"
+        ]
+    },
+    {
+        id: 7,
+        name: "度量绩效域",
+        icon: "📊",
+        goals: [
+            "对项目状况有充分理解",
+            "数据支持决策和行动",
+            "及时行动以保持绩效",
+            "基于预测和评估做出决策"
+        ],
+        memory: [
+            "充分理解状况 - 全面监控",
+            "数据支持决策 - 基于事实",
+            "及时行动 - 快速响应",
+            "基于评估决策 - 科学管理"
+        ],
+        problems: [
+            "未能建立恰当的关键绩效指标（KPI）来衡量项目进展",
+            "未能有效传达度量信息和结果，导致信息不透明",
+            "忽略了可能误导决策的度量陷阱",
+            "未利用度量数据进行深入的项目诊断",
+            "缺少持续改进的机制，未能优化流程和提升绩效",
+            "混淆了领先指标和滞后指标，导致监控失效",
+            "度量指标未遵循具体、可衡量、可达成、相关性强、时限明确（SMART）的原则",
+            "度量的内容和指标设置不当，未能准确反映项目状况",
+            "选用了不适当的工具来展示度量信息，如错误配置了数据仪表盘或任务板或大型可见图表",
+            "对度量结果的分析和诊断不够及时或全面",
+            "对项目的整体状况缺乏充分理解",
+            "数据收集和分析不足，影响了决策质量",
+            "在识别问题后未能迅速采取纠正措施",
+            "决策未能基于准确的预测和评估，导致未能实现既定目标和价值创造",
+            "在绩效度量领域，错误应用了度量指标和检查方法"
+        ]
+    },
+    {
+        id: 8,
+        name: "不确定性绩效域",
+        icon: "⚠️",
+        goals: [
+            "了解项目运行的环境",
+            "积极识别并应对不确定性",
+            "充分理解各因素相互依赖关系",
+            "预测威胁和机会的后果",
+            "最小化不确定性的负面影响",
+            "充分利用机会",
+            "有效利用成本和进度储备"
+        ],
+        memory: [
+            "了解环境 - 识别外部因素",
+            "识别应对 - 主动风险管理",
+            "分析依赖关系 - 理解关联",
+            "预测威胁机会 - 前瞻性思维",
+            "最小化负面影响 - 风险应对",
+            "利用机会 - 积极进取",
+            "有效利用储备 - 合理缓冲"
+        ],
+        problems: [
+            "没做风险管理或缺乏风险管理措施，未能及时识别和应对潜在的项目威胁",
+            "没做好模糊性处理或未对项目的不确定性进行适当处理，导致应对方案可能不适用",
+            "没做复杂性的处理或对项目复杂性的管理不足，可能采用了不恰当的处理方法",
+            "风险管理执行不力，未能有效预防和减轻风险事件的影响",
+            "模糊性处理不当，可能错误选择了解决方案，影响项目成果",
+            "复杂性处理不当，可能使用了错误的方法，增加了项目难度",
+            "对项目运行环境的理解不足，未能充分适应和利用环境条件",
+            "未能积极识别和应对不确定性因素，缺乏主动的风险管理",
+            "未充分理解项目中各因素的相互依赖关系，可能忽视了它们之间的影响",
+            "缺乏对威胁和机会的预测，未能充分评估问题的潜在后果",
+            "未能有效减少不确定性对项目交付的负面影响，可能未采取适当措施",
+            "未能充分利用机会来提升项目绩效和成果，错失改进机会",
+            "成本和进度储备未得到有效利用，可能未能为风险事件提供足够缓冲",
+            "在不确定性绩效领域中，使用了不恰当的指标和检查方法，导致管理失效"
+        ]
+    }
+];
+function initDomains() {
+    const grid = document.getElementById('domainGrid');
+    grid.innerHTML = '';
+    
+    let totalProblems = 0;
+    
+    performanceDomains.forEach(domain => {
+        totalProblems += domain.problems.length;
+        
+        const card = document.createElement('div');
+        card.className = 'domain-card';
+        card.setAttribute('data-domain', domain.id);
+        
+        const header = document.createElement('div');
+        header.className = `domain-header domain-${domain.id}`;
+        header.onclick = () => toggleDomain(domain.id);
+        header.innerHTML = `
+            <span>
+                <span class="domain-icon">${domain.icon}</span>
+                ${domain.name}
+                <span class="section-count">${domain.problems.length}项</span>
+            </span>
+            <span class="toggle-icon" id="icon-${domain.id}">▼</span>
+        `;
+        
+        const content = document.createElement('div');
+        content.className = 'domain-content';
+        content.id = `content-${domain.id}`;
+        
+        let goalsHTML = `
+            <div class="goal-section">
+                <div class="goal-title">🎯 绩效目标</div>
+                <div class="goal-list">
+                    ${domain.goals.map(goal => `• ${goal}`).join('<br>')}
+                </div>
+            </div>
+        `;
+        
+        let memoryHTML = `
+            <div class="memory-section">
+                <div class="memory-title">🧠 记忆技巧</div>
+                ${domain.memory.map(item => `<div class="memory-item">${item}</div>`).join('')}
+            </div>
+        `;
+        
+        let problemsHTML = domain.problems.map((problem, index) => {
+            let highlightedText = problem
+                .replace(/【([^】]+)】/g, '<span class="highlight-key">$1</span>')
+                .replace(/（([^）]+)）/g, '<span class="highlight-key">$1</span>');
+            
+            return `
+                <div class="problem-section">
+                    <span class="problem-number">${index + 1}</span>
+                    <span class="problem-text">${highlightedText}</span>
+                </div>
+            `;
+        }).join('');
+        
+        content.innerHTML = goalsHTML + memoryHTML + problemsHTML;
+        
+        card.appendChild(header);
+        card.appendChild(content);
+        grid.appendChild(card);
+    });
+    
+    document.getElementById('statsNumber').textContent = totalProblems + '+';
+    document.getElementById('statsText').textContent = '个常见问题已收录';
+}
+
+function toggleDomain(id) {
+    const content = document.getElementById(`content-${id}`);
+    const icon = document.getElementById(`icon-${id}`);
+    
+    const isVisible = content.style.display === 'block';
+    content.style.display = isVisible ? 'none' : 'block';
+    icon.classList.toggle('expanded', !isVisible);
+}
+
+function toggleAll(expand) {
+    performanceDomains.forEach(domain => {
+        const content = document.getElementById(`content-${domain.id}`);
+        const icon = document.getElementById(`icon-${domain.id}`);
+        content.style.display = expand ? 'block' : 'none';
+        icon.classList.toggle('expanded', expand);
+    });
+}
+
+function handleSearch() {
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    let matchCount = 0;
+    
+    performanceDomains.forEach(domain => {
+        const card = document.querySelector(`[data-domain="${domain.id}"]`);
+        const problems = domain.problems.filter(p => p.toLowerCase().includes(query));
+        
+        if (query === '' || problems.length > 0 || domain.name.toLowerCase().includes(query)) {
+            card.style.display = 'block';
+            if (query !== '' && problems.length > 0) {
+                document.getElementById(`content-${domain.id}`).style.display = 'block';
+                document.getElementById(`icon-${domain.id}`).classList.add('expanded');
+                matchCount += problems.length;
+            }
+        } else {
+            card.style.display = 'none';
+        }
+    });
+    
+    if (query !== '') {
+        document.getElementById('statsNumber').textContent = matchCount;
+        document.getElementById('statsText').textContent = '个匹配结果';
+    } else {
+        const total = performanceDomains.reduce((sum, d) => sum + d.problems.length, 0);
+        document.getElementById('statsNumber').textContent = total + '+';
+        document.getElementById('statsText').textContent = '个常见问题已收录';
+    }
+}
+
+window.onload = initDomains;
+</script>
+
+</body>
+</html>
