@@ -1,0 +1,120 @@
+ <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>项目管理学习中心</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, "Microsoft YaHei", sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            color: white;
+            font-size: 36px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        .subtitle {
+            text-align: center;
+            color: rgba(255,255,255,0.9);
+            font-size: 18px;
+            margin-bottom: 40px;
+        }
+        .apps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .app-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            text-decoration: none;
+            display: block;
+        }
+        .app-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        .app-icon {
+            font-size: 48px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .app-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .app-desc {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+            text-align: center;
+        }
+        .app-badge {
+            display: inline-block;
+            background: #f093fb;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎓 项目管理学习中心</h1>
+        <p class="subtitle">专业的项目管理知识学习工具集</p>
+        
+        <div class="apps-grid">
+            <a href="pmp/" class="app-card">
+                <div class="app-icon">🎯</div>
+                <div class="app-title">PMP 49过程地图</div>
+                <div class="app-desc">
+                    PMBOK第六版49个过程深度交互学习<br>
+                    包含完整的ITTO和案例分析
+                </div>
+                <center><span class="app-badge">PMP认证</span></center>
+            </a>
+            
+            <a href="performance/" class="app-card">
+                <div class="app-icon">📊</div>
+                <div class="app-title">绩效域案例分析</div>
+                <div class="app-desc">
+                    信息系统项目管理师考试专用<br>
+                    8大绩效域121个常见问题
+                </div>
+                <center><span class="app-badge">软考高级</span></center>
+            </a>
+        </div>
+        
+        <footer>
+            © 2025 项目管理学习中心 | 持续更新中
+        </footer>
+    </div>
+</body>
+</html>
